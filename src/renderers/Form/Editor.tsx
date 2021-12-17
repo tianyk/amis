@@ -203,7 +203,8 @@ export default class EditorControl extends React.Component<EditorProps, any> {
       editorTheme,
       size,
       data,
-      allowFullscreen
+      allowFullscreen,
+      editorFactory
     } = this.props;
 
     let language = this.props.language;
@@ -242,6 +243,7 @@ export default class EditorControl extends React.Component<EditorProps, any> {
           language={language}
           editorTheme={editorTheme}
           editorDidMount={this.handleEditorMounted}
+          editorFactory={editorFactory}
           options={{
             ...options,
             readOnly: disabled

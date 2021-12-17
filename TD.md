@@ -12,3 +12,6 @@
 
 支持`viewDate`
 
+### editorFactory
+
+编辑器支持 `editorFactory` 参数
