@@ -1,0 +1,134 @@
+From 06f6b6cc52ad471250100cefa788c4ae42e2433b Mon Sep 17 00:00:00 2001
+From: "yongketian@gmail.com" <tyk>
+Date: Fri, 17 Dec 2021 14:34:33 +0800
+Subject: [PATCH] viewDate
+
+---
+ TD.md                            |  5 +++++
+ src/components/DatePicker.tsx    |  4 ++++
+ src/renderers/Form/InputDate.tsx | 19 ++++++++++++++++++-
+ 3 files changed, 27 insertions(+), 1 deletion(-)
+
+diff --git a/TD.md b/TD.md
+index cc1c5feb..a7979069 100644
+--- a/TD.md
++++ b/TD.md
+@@ -7,3 +7,8 @@
+ ```
+ ./build-td.sh [dev]
+ ```
++
++### viewDate
++
++支持`viewDate`
++
+diff --git a/src/components/DatePicker.tsx b/src/components/DatePicker.tsx
+index 4d742d4a..5bfcba8f 100644
+--- a/src/components/DatePicker.tsx
++++ b/src/components/DatePicker.tsx
+@@ -256,6 +256,7 @@ export interface DateProps extends LocaleProps, ThemeProps {
+   // minTime?: moment.Moment;
+   // maxTime?: moment.Moment;
+   dateFormat?: string;
++  viewDate?: Date | string | moment.Moment;
+   timeConstraints?: {
+     hours?: {
+       min: number;
+@@ -536,6 +537,7 @@ export class DatePicker extends React.Component<DateProps, DatePickerState> {
+       dateFormat,
+       timeFormat,
+       viewMode,
++      viewDate,
+       timeConstraints,
+       popOverContainer,
+       clearable,
+@@ -572,6 +574,7 @@ export class DatePicker extends React.Component<DateProps, DatePickerState> {
+             timeFormat={timeFormat}
+             isValidDate={this.checkIsValidDate}
+             viewMode={viewMode}
++            viewDate={viewDate}
+             timeConstraints={timeConstraints}
+             input={false}
+             onClose={this.close}
+@@ -647,6 +650,7 @@ export class DatePicker extends React.Component<DateProps, DatePickerState> {
+                 timeFormat={timeFormat}
+                 isValidDate={this.checkIsValidDate}
+                 viewMode={viewMode}
++                viewDate={viewDate}
+                 timeConstraints={timeConstraints}
+                 input={false}
+                 onClose={this.close}
+diff --git a/src/renderers/Form/InputDate.tsx b/src/renderers/Form/InputDate.tsx
+index e58bd807..61d83f6c 100644
+--- a/src/renderers/Form/InputDate.tsx
++++ b/src/renderers/Form/InputDate.tsx
+@@ -1,7 +1,7 @@
+ import React from 'react';
+ import {FormItem, FormControlProps, FormBaseControl} from './Item';
+ import cx from 'classnames';
+-import {filterDate} from '../../utils/tpl-builtin';
++import {filterDate, tokenize} from '../../utils/tpl-builtin';
+ import moment from 'moment';
+ import 'moment/locale/zh-cn';
+ import DatePicker from '../../components/DatePicker';
+@@ -85,6 +85,12 @@ export interface DateControlSchema extends InputDateBaseControlSchema {
+    * 限制最大日期
+    */
+   maxDate?: string;
++
++  /**
++   * 打开日历时的日期，默认为当天
++   * 文档：https://github.com/arqex/react-datetime/tree/v2.16.1#api
++   */
++  viewDate?: Date | string | moment.Moment;
+ }
+ 
+ /**
+@@ -130,6 +136,12 @@ export interface DateTimeControlSchema extends InputDateBaseControlSchema {
+    * 不记得了
+    */
+   timeConstraints?: any;
++
++  /**
++   * 打开日历时的日期，默认为当天
++   * 文档：https://github.com/arqex/react-datetime/tree/v2.16.1#api
++   */
++  viewDate?: Date | string | moment.Moment;
+ }
+ 
+ /**
+@@ -262,6 +274,7 @@ export interface DateProps extends FormControlProps {
+   utc?: boolean; // 设定是否存储 utc 时间。
+   minDate?: string;
+   maxDate?: string;
++  viewDate?: string;
+ }
+ 
+ interface DateControlState {
+@@ -348,6 +361,7 @@ export default class DateControl extends React.PureComponent<
+       format,
+       timeFormat,
+       valueFormat,
++      viewDate,
+       ...rest
+     } = this.props;
+ 
+@@ -355,12 +369,15 @@ export default class DateControl extends React.PureComponent<
+       format = timeFormat;
+     }
+ 
++    const viewDate2 = viewDate ? moment(tokenize(viewDate, this.props.data)) : undefined;
++
+     return (
+       <div className={cx(`DateControl`, className)}>
+         <DatePicker
+           {...rest}
+           timeFormat={timeFormat}
+           format={valueFormat || format}
++          viewDate={viewDate2}
+           {...this.state}
+           classnames={cx}
+         />
+-- 
+2.32.0 (Apple Git-132)
+
