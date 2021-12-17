@@ -1,0 +1,107 @@
+From fce2e9f736c16296f7a0f7744db2e62a818a7ce8 Mon Sep 17 00:00:00 2001
+From: "yongketian@gmail.com" <tyk>
+Date: Fri, 17 Dec 2021 14:01:13 +0800
+Subject: [PATCH] build td
+
+---
+ .npmrc      |  2 ++
+ TD.md       |  9 +++++++++
+ build-td.sh | 42 ++++++++++++++++++++++++++++++++++++++++++
+ fis-conf.js |  4 ++--
+ 4 files changed, 55 insertions(+), 2 deletions(-)
+ create mode 100644 .npmrc
+ create mode 100644 TD.md
+ create mode 100755 build-td.sh
+
+diff --git a/.npmrc b/.npmrc
+new file mode 100644
+index 00000000..32bb6f47
+--- /dev/null
++++ b/.npmrc
+@@ -0,0 +1,2 @@
++; registry = https://registry.npm.taobao.org
++registry = http://mirrors.cloud.tencent.com/npm/
+diff --git a/TD.md b/TD.md
+new file mode 100644
+index 00000000..cc1c5feb
+--- /dev/null
++++ b/TD.md
+@@ -0,0 +1,9 @@
++## 定制
++
++### 定制编译SDK
++
++编译生成未压缩代码
++
++```
++./build-td.sh [dev]
++```
+diff --git a/build-td.sh b/build-td.sh
+new file mode 100755
+index 00000000..72a3b8bf
+--- /dev/null
++++ b/build-td.sh
+@@ -0,0 +1,42 @@
++#!/bin/bash
++set -e
++
++export NODE_ENV=production
++
++# dev 环境
++if [ "$1" = "dev" ]; then
++  export NODE_ENV=development
++fi
++
++rm -rf lib
++rm -rf output
++
++echo "===fis release==="
++./node_modules/.bin/fis3 release publish -c
++rm -rf lib/node_modules
++
++# 生成 sdk
++echo "===fis sdk==="
++rm -rf sdk && ./node_modules/.bin/fis3 release publish-sdk -c
++
++cp -r node_modules/monaco-editor/min/vs/base/browser sdk/thirds/monaco-editor/min/vs/base
++
++echo "===postcss ie11==="
++# 生成去掉变量的 css
++./node_modules/.bin/postcss sdk/sdk.css >sdk/sdk-ie11.css
++./node_modules/.bin/postcss sdk/ang.css >sdk/ang-ie11.css
++./node_modules/.bin/postcss sdk/dark.css >sdk/dark-ie11.css
++./node_modules/.bin/postcss sdk/antd.css >sdk/antd-ie11.css
++
++# 默认变成 cxd 了，所以要拷贝一份兼容之前的引用
++cp sdk/sdk.css sdk/cxd.css
++cp sdk/sdk-ie11.css sdk/cxd-ie11.css
++
++cp ./lib/helper.css sdk/helper.css
++cp ./lib/helper.css.map sdk/helper.css.map
++cp examples/static/iconfont.css sdk/
++cp examples/static/iconfont.eot sdk/
++
++if [ "$1" = "dev" ]; then
++  mv sdk/sdk.js sdk/sdk-development.js
++fi
+diff --git a/fis-conf.js b/fis-conf.js
+index b5d3fa37..21df5575 100644
+--- a/fis-conf.js
++++ b/fis-conf.js
+@@ -468,11 +468,11 @@ if (fis.project.currentMedia() === 'publish') {
+ 
+   env.match('/examples/mod.js', {
+     isMod: false,
+-    optimizer: fis.plugin('terser')
++    optimizer: process.env.NODE_ENV==='production' ? fis.plugin('terser') : null,
+   });
+ 
+   env.match('*.{js,jsx,ts,tsx}', {
+-    optimizer: fis.plugin('terser'),
++    optimizer: process.env.NODE_ENV==='production' ? fis.plugin('terser') : null,
+     moduleId: function (m, path) {
+       return fis.util.md5(package.version + 'amis-sdk' + path);
+     }
+-- 
+2.32.0 (Apple Git-132)
+
