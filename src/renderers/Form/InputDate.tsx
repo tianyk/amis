@@ -1,7 +1,7 @@
 import React from 'react';
 import {FormItem, FormControlProps, FormBaseControl} from './Item';
 import cx from 'classnames';
-import {filterDate} from '../../utils/tpl-builtin';
+import {filterDate, tokenize} from '../../utils/tpl-builtin';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 import DatePicker from '../../components/DatePicker';
@@ -85,6 +85,12 @@ export interface DateControlSchema extends InputDateBaseControlSchema {
    * 限制最大日期
    */
   maxDate?: string;
+
+  /**
+   * 打开日历时的日期，默认为当天
+   * 文档：https://github.com/arqex/react-datetime/tree/v2.16.1#api
+   */
+  viewDate?: Date | string | moment.Moment;
 }
 
 /**
@@ -130,6 +136,12 @@ export interface DateTimeControlSchema extends InputDateBaseControlSchema {
    * 不记得了
    */
   timeConstraints?: any;
+
+  /**
+   * 打开日历时的日期，默认为当天
+   * 文档：https://github.com/arqex/react-datetime/tree/v2.16.1#api
+   */
+  viewDate?: Date | string | moment.Moment;
 }
 
 /**
@@ -262,6 +274,7 @@ export interface DateProps extends FormControlProps {
   utc?: boolean; // 设定是否存储 utc 时间。
   minDate?: string;
   maxDate?: string;
+  viewDate?: string;
 }
 
 interface DateControlState {
@@ -348,6 +361,7 @@ export default class DateControl extends React.PureComponent<
       format,
       timeFormat,
       valueFormat,
+      viewDate,
       ...rest
     } = this.props;
 
@@ -355,12 +369,15 @@ export default class DateControl extends React.PureComponent<
       format = timeFormat;
     }
 
+    const viewDate2 = viewDate ? moment(tokenize(viewDate, this.props.data)) : undefined;
+
     return (
       <div className={cx(`DateControl`, className)}>
         <DatePicker
           {...rest}
           timeFormat={timeFormat}
           format={valueFormat || format}
+          viewDate={viewDate2}
           {...this.state}
           classnames={cx}
         />

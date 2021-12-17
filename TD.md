@@ -7,3 +7,8 @@
 ```
 ./build-td.sh [dev]
 ```
+
+### viewDate
+
+支持`viewDate`
+

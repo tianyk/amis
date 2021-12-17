@@ -256,6 +256,7 @@ export interface DateProps extends LocaleProps, ThemeProps {
   // minTime?: moment.Moment;
   // maxTime?: moment.Moment;
   dateFormat?: string;
+  viewDate?: Date | string | moment.Moment;
   timeConstraints?: {
     hours?: {
       min: number;
@@ -536,6 +537,7 @@ export class DatePicker extends React.Component<DateProps, DatePickerState> {
       dateFormat,
       timeFormat,
       viewMode,
+      viewDate,
       timeConstraints,
       popOverContainer,
       clearable,
@@ -572,6 +574,7 @@ export class DatePicker extends React.Component<DateProps, DatePickerState> {
             timeFormat={timeFormat}
             isValidDate={this.checkIsValidDate}
             viewMode={viewMode}
+            viewDate={viewDate}
             timeConstraints={timeConstraints}
             input={false}
             onClose={this.close}
@@ -647,6 +650,7 @@ export class DatePicker extends React.Component<DateProps, DatePickerState> {
                 timeFormat={timeFormat}
                 isValidDate={this.checkIsValidDate}
                 viewMode={viewMode}
+                viewDate={viewDate}
                 timeConstraints={timeConstraints}
                 input={false}
                 onClose={this.close}
