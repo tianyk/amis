@@ -1,0 +1,46 @@
+From 285d0cecb5983970abbaa011ec8e09216e5b9ffe Mon Sep 17 00:00:00 2001
+From: "yongketian@gmail.com" <tyk>
+Date: Fri, 17 Dec 2021 14:49:41 +0800
+Subject: [PATCH] editorFactory
+
+---
+ TD.md                         | 3 +++
+ src/renderers/Form/Editor.tsx | 4 +++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/TD.md b/TD.md
+index a7979069..696055fb 100644
+--- a/TD.md
++++ b/TD.md
+@@ -12,3 +12,6 @@
+ 
+ 支持`viewDate`
+ 
++### editorFactory
++
++编辑器支持 `editorFactory` 参数
+diff --git a/src/renderers/Form/Editor.tsx b/src/renderers/Form/Editor.tsx
+index 049a7270..4b4197b1 100644
+--- a/src/renderers/Form/Editor.tsx
++++ b/src/renderers/Form/Editor.tsx
+@@ -203,7 +203,8 @@ export default class EditorControl extends React.Component<EditorProps, any> {
+       editorTheme,
+       size,
+       data,
+-      allowFullscreen
++      allowFullscreen,
++      editorFactory
+     } = this.props;
+ 
+     let language = this.props.language;
+@@ -242,6 +243,7 @@ export default class EditorControl extends React.Component<EditorProps, any> {
+           language={language}
+           editorTheme={editorTheme}
+           editorDidMount={this.handleEditorMounted}
++          editorFactory={editorFactory}
+           options={{
+             ...options,
+             readOnly: disabled
+-- 
+2.32.0 (Apple Git-132)
+
