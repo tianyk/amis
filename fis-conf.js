@@ -215,7 +215,7 @@ fis.match('*.html:jsx', {
 
 // 这些用了 esm
 fis.match(
-  '{echarts/extension/**.js,zrender/**.js,ansi-to-react/lib/index.js}',
+  '{echarts/extension/**.js,zrender/**.js,ansi-to-react/lib/index.js,markdown-it-html5-media/**.js}',
   {
     parser: fis.plugin('typescript', {
       sourceMap: false,
@@ -495,7 +495,7 @@ if (fis.project.currentMedia() === 'publish') {
         '!mpegts.js/**',
         '!hls.js/**',
         '!froala-editor/**',
-        '!react-froala-wysiwyg/**',
+
         '!tinymce/**',
         '!zrender/**',
         '!echarts/**',
@@ -526,11 +526,7 @@ if (fis.project.currentMedia() === 'publish') {
         '!punycode/**'
       ],
 
-      'rich-text.js': [
-        'src/components/RichText.tsx',
-        'froala-editor/**',
-        'react-froala-wysiwyg/**'
-      ],
+      'rich-text.js': ['src/components/RichText.tsx', 'froala-editor/**'],
 
       'tinymce.js': ['src/components/Tinymce.tsx', 'tinymce/**'],
 
@@ -569,7 +565,7 @@ if (fis.project.currentMedia() === 'publish') {
         '!mpegts.js/**',
         '!hls.js/**',
         '!froala-editor/**',
-        '!react-froala-wysiwyg/**',
+
         '!src/components/RichText.tsx',
         '!zrender/**',
         '!echarts/**',
@@ -777,7 +773,7 @@ if (fis.project.currentMedia() === 'publish') {
         '!mpegts.js/**',
         '!hls.js/**',
         '!froala-editor/**',
-        '!react-froala-wysiwyg/**',
+
         '!tinymce/**',
         '!zrender/**',
         '!echarts/**',
@@ -808,11 +804,7 @@ if (fis.project.currentMedia() === 'publish') {
         '!punycode/**'
       ],
 
-      'pkg/rich-text.js': [
-        'src/components/RichText.js',
-        'froala-editor/**',
-        'react-froala-wysiwyg/**'
-      ],
+      'pkg/rich-text.js': ['src/components/RichText.js', 'froala-editor/**'],
 
       'pkg/tinymce.js': ['src/components/Tinymce.tsx', 'tinymce/**'],
 
@@ -864,7 +856,7 @@ if (fis.project.currentMedia() === 'publish') {
         '!mpegts.js/**',
         '!hls.js/**',
         '!froala-editor/**',
-        '!react-froala-wysiwyg/**',
+
         '!src/components/RichText.tsx',
         '!zrender/**',
         '!echarts/**',

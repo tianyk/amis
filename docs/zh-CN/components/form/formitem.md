@@ -60,6 +60,28 @@ order: 1
       "label": "内联",
       "name": "text2",
       "mode": "inline"
+    },
+    {
+      "type": "input-text",
+      "label": "内联2",
+      "name": "text2",
+      "mode": "inline"
+    },
+    {
+      "type": "group",
+      "mode": "inline",
+      "body": [
+        {
+          "type": "input-text",
+          "label": "内联3",
+          "name": "text2"
+        },
+        {
+          "type": "input-text",
+          "label": "内联4",
+          "name": "text2"
+        }
+      ]
     }
   ]
 }
@@ -988,6 +1010,7 @@ Table 类型的表单项，要实现服务端校验，可以使用 `路径key` �
 | inputClassName | `string`                                           |        | 表单控制器类名                                             |
 | labelClassName | `string`                                           |        | label 的类名                                               |
 | name           | `string`                                           |        | 字段名，指定该表单项提交时的 key                           |
+| value          | `string`                                           |        | 表单默认值                                                 |
 | label          | [模板](../../../docs/concepts/template) 或 `false` |        | 表单项标签                                                 |
 | labelRemark    | [Remark](../remark)                                |        | 表单项标签描述                                             |
 | description    | [模板](../../../docs/concepts/template)            |        | 表单项描述                                                 |

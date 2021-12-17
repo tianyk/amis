@@ -300,6 +300,27 @@ List 的内容、Card 卡片的内容配置同上
 }
 ```
 
+## 自定义点击行为
+
+> 1.5.0 及以上版本
+
+可以通过 `clickAction` 设置点击触发行为。
+
+```schema: scope="body"
+{
+    "type": "image",
+    "src": "https://internal-amis-res.cdn.bcebos.com/images/2020-1/1578395692722/4f3cb4202335.jpeg@s_0,w_216,l_1,f_jpg,q_80",
+    "class": "cursor-pointer",
+    "clickAction": {
+        "actionType": "dialog",
+        "dialog": {
+            "title": "弹框标题",
+            "body": "这是一个弹框"
+        }
+    }
+}
+```
+
 ## 属性表
 
 | 属性名         | 类型                                 | 默认值    | 说明                                                                                   |
@@ -313,7 +334,7 @@ List 的内容、Card 卡片的内容配置同上
 | title          | `string`                             |           | 标题                                                                                   |
 | imageCaption   | `string`                             |           | 描述                                                                                   |
 | placeholder    | `string`                             |           | 占位文本                                                                               |
-| defaultImage   | `string`                             |           | 默认显示的图片地址                                                                     |
+| defaultImage   | `string`                             |           | 无数据时显示的图片                                                                     |
 | src            | `string`                             |           | 缩略图地址                                                                             |
 | href           | [模板](../../docs/concepts/template) |           | 外部链接地址                                                                           |
 | originalSrc    | `string`                             |           | 原图地址                                                                               |

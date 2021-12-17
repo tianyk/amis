@@ -7,6 +7,7 @@ import {Icon} from '../components/icons';
 import {LocaleProps, localeable} from '../locale';
 import {BaseSchema, SchemaClassName, SchemaTpl, SchemaUrlPath} from '../Schema';
 import {resolveVariable} from '../utils/tpl-builtin';
+import handleAction from '../utils/handleAction';
 
 /**
  * 图片展示控件。
@@ -162,6 +163,23 @@ export class ImageThumb extends React.Component<ImageThumbProps> {
       imageMode
     } = this.props;
 
+    const enlarge =
+      enlargeAble || overlays ? (
+        <div key="overlay" className={cx('Image-overlay')}>
+          {enlargeAble ? (
+            <a
+              data-tooltip={__('Image.zoomIn')}
+              data-position="bottom"
+              target="_blank"
+              onClick={this.handleEnlarge}
+            >
+              <Icon icon="view" className="icon" />
+            </a>
+          ) : null}
+          {overlays}
+        </div>
+      ) : null;
+
     let image = (
       <div
         className={cx(
@@ -184,6 +202,7 @@ export class ImageThumb extends React.Component<ImageThumbProps> {
               src={src}
               alt={alt}
             />
+            {enlarge}
           </div>
         ) : (
           <div className={cx('Image-thumbWrap')}>
@@ -205,21 +224,7 @@ export class ImageThumb extends React.Component<ImageThumbProps> {
                 alt={alt}
               />
             </div>
-            {enlargeAble || overlays ? (
-              <div key="overlay" className={cx('Image-overlay')}>
-                {enlargeAble ? (
-                  <a
-                    data-tooltip={__('Image.zoomIn')}
-                    data-position="bottom"
-                    target="_blank"
-                    onClick={this.handleEnlarge}
-                  >
-                    <Icon icon="view" className="icon" />
-                  </a>
-                ) : null}
-                {overlays}
-              </div>
-            ) : null}
+            {enlarge}
           </div>
         )}
 
@@ -322,6 +327,14 @@ export class ImageField extends React.Component<ImageFieldProps, object> {
       );
   }
 
+  @autobind
+  handleClick(e: React.MouseEvent<HTMLElement>) {
+    const clickAction = this.props.clickAction;
+    if (clickAction) {
+      handleAction(e, clickAction, this.props);
+    }
+  }
+
   render() {
     const {
       className,
@@ -359,6 +372,7 @@ export class ImageField extends React.Component<ImageFieldProps, object> {
             : 'ImageField--thumb',
           className
         )}
+        onClick={this.handleClick}
       >
         {value ? (
           <ThemedImageThumb

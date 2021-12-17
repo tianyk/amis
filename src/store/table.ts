@@ -45,6 +45,7 @@ export const Column = types
     checkdisable: false,
     isPrimary: false,
     searchable: types.maybe(types.frozen()),
+    enableSearch: true,
     sortable: false,
     filterable: types.optional(types.frozen(), undefined),
     fixed: '',
@@ -66,8 +67,13 @@ export const Column = types
 
       table.persistSaveToggledColumns();
     },
+
     setToggled(value: boolean) {
       self.toggled = value;
+    },
+
+    setEnableSearch(value: boolean) {
+      self.enableSearch = value;
     }
   }));
 
@@ -292,6 +298,10 @@ export const TableStore = iRendererStore
     keepItemSelectionOnPageChange: false
   })
   .views(self => {
+    function getColumnsExceptBuiltinTypes() {
+      return self.columns.filter(item => !/^__/.test(item.type));
+    }
+
     function getForms() {
       return self.formsRef.map(item => ({
         store: getStoreById(item.id) as IFormStore,
@@ -414,12 +424,12 @@ export const TableStore = iRendererStore
       return getMovedRows().length;
     }
 
-    function getHoverIndex(): number {
-      return self.rows.findIndex(item => item.isHover);
+    function getHovedRow(): IRow | undefined {
+      return flattenTree<IRow>(self.rows).find((item: IRow) => item.isHover);
     }
 
     function getUnSelectedRows() {
-      return self.rows.filter(item => !item.checked);
+      return flattenTree<IRow>(self.rows).filter((item: IRow) => !item.checked);
     }
 
     function getData(superData: any): any {
@@ -499,9 +509,35 @@ export const TableStore = iRendererStore
       });
     }
 
+    function getFirstToggledColumnIndex() {
+      const column = self.columns.find(
+        column => !/^__/.test(column.type) && column.toggled
+      );
+
+      return column == null ? null : column.index;
+    }
+
+    function getSearchableColumns() {
+      return self.columns.filter(
+        column => column.searchable && isObject(column.searchable)
+      );
+    }
+
     return {
+      get columnsData() {
+        return getColumnsExceptBuiltinTypes();
+      },
+
       get forms() {
         return getForms();
+      },
+
+      get searchableColumns() {
+        return getSearchableColumns();
+      },
+
+      get activedSearchableColumns() {
+        return getSearchableColumns().filter(column => column.enableSearch);
       },
 
       get filteredColumns() {
@@ -568,7 +604,9 @@ export const TableStore = iRendererStore
       },
 
       get checkableRows() {
-        return self.rows.filter(item => item.checkable);
+        return flattenTree<IRow>(self.rows).filter(
+          (item: IRow) => item.checkable
+        );
       },
 
       get expandableRows() {
@@ -583,8 +621,8 @@ export const TableStore = iRendererStore
         return getMovedRows();
       },
 
-      get hoverIndex() {
-        return getHoverIndex();
+      get hoverRow() {
+        return getHovedRow();
       },
 
       get disabledHeadCheckbox() {
@@ -596,6 +634,10 @@ export const TableStore = iRendererStore
         }
 
         return maxLength === selectedLength;
+      },
+
+      get firstToggledColumnIndex() {
+        return getFirstToggledColumnIndex();
       },
 
       getData,
@@ -707,6 +749,51 @@ export const TableStore = iRendererStore
           rawIndex: index - 3,
           type: item.type || 'plain',
           pristine: item,
+          toggled: item.toggled !== false,
+          breakpoint: item.breakpoint,
+          isPrimary: index === 3
+        }));
+
+        self.columns.replace(columns as any);
+      }
+    }
+
+    function updateColumns(columns: Array<SColumn>) {
+      if (columns && Array.isArray(columns)) {
+        columns = columns.filter(column => column).concat();
+
+        if (!columns.length) {
+          columns.push({
+            type: 'text',
+            label: '空'
+          });
+        }
+
+        columns.unshift({
+          type: '__expandme',
+          toggable: false,
+          className: 'Table-expandCell'
+        });
+
+        columns.unshift({
+          type: '__checkme',
+          fixed: 'left',
+          toggable: false,
+          className: 'Table-checkCell'
+        });
+
+        columns.unshift({
+          type: '__dragme',
+          toggable: false,
+          className: 'Table-dragCell'
+        });
+
+        columns = columns.map((item, index) => ({
+          ...item,
+          index,
+          rawIndex: index - 3,
+          type: item.type || 'plain',
+          pristine: item.pristine || item,
           toggled: item.toggled !== false,
           breakpoint: item.breakpoint,
           isPrimary: index === 3
@@ -938,9 +1025,10 @@ export const TableStore = iRendererStore
 
     function updateSelected(selected: Array<any>, valueField?: string) {
       self.selectedRows.clear();
-      self.rows.forEach(item => {
+
+      eachTree(self.rows, item => {
         if (~selected.indexOf(item.pristine)) {
-          self.selectedRows.push(item);
+          self.selectedRows.push(item.id);
         } else if (
           find(
             selected,
@@ -949,9 +1037,10 @@ export const TableStore = iRendererStore
               a[valueField || 'value'] == item.pristine[valueField || 'value']
           )
         ) {
-          self.selectedRows.push(item);
+          self.selectedRows.push(item.id);
         }
       });
+
       updateCheckDisable();
     }
 
@@ -1031,8 +1120,10 @@ export const TableStore = iRendererStore
         if (idx === -1) {
           // 如果上一个是选中状态，则将之间的所有 check 都变成可选
           if (lastCheckedRow.checked) {
-            if (maxLength && self.selectedRows.length < maxLength) {
-              self.selectedRows.push(rowItem);
+            if (maxLength) {
+              if (self.selectedRows.length < maxLength) {
+                self.selectedRows.push(rowItem);
+              }
             } else {
               self.selectedRows.push(rowItem);
             }
@@ -1177,6 +1268,7 @@ export const TableStore = iRendererStore
 
     return {
       update,
+      updateColumns,
       initRows,
       updateSelected,
       toggleAll,
