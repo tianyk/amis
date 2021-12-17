@@ -468,11 +468,11 @@ if (fis.project.currentMedia() === 'publish') {
 
   env.match('/examples/mod.js', {
     isMod: false,
-    optimizer: fis.plugin('terser')
+    optimizer: process.env.NODE_ENV==='production' ? fis.plugin('terser') : null,
   });
 
   env.match('*.{js,jsx,ts,tsx}', {
-    optimizer: fis.plugin('terser'),
+    optimizer: process.env.NODE_ENV==='production' ? fis.plugin('terser') : null,
     moduleId: function (m, path) {
       return fis.util.md5(package.version + 'amis-sdk' + path);
     }
