@@ -137,7 +137,7 @@ export function renderChild(
       ? {type: 'tpl', tpl: String(node)}
       : (node as Schema);
 
-  const transform = props.propsTransform;
+  const transform = props.propsTransform; /* props 转换 */
 
   if (transform) {
     // @ts-ignore

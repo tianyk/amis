@@ -4,7 +4,7 @@ import {Api, ApiObject, Payload, fetchOptions} from '../types';
 import {extendObject, isEmpty, isObject} from '../utils/helper';
 import {ServerError} from '../utils/errors';
 
-export const ServiceStore = iRendererStore
+export const ServiceStore = iRendererStore /* 支持API的 */
   .named('ServiceStore')
   .props({
     msg: '',
@@ -73,7 +73,7 @@ export const ServiceStore = iRendererStore
         }
 
         (options && options.silent) || markFetching(true);
-        const json: Payload = yield getEnv(self).fetcher(api, data, {
+        const json: Payload = yield getEnv(self).fetcher(api, data, { /* 从 env 获取 fetcher */
           ...options,
           cancelExecutor: (executor: Function) => (fetchCancel = executor)
         });
@@ -98,7 +98,7 @@ export const ServiceStore = iRendererStore
             ...(replace ? {} : self.data),
             ...json.data
           };
-          reInitData(data, replace);
+          reInitData(data, replace); /* 替换数据 */
           self.hasRemoteData = true;
           if (options && options.onSuccess) {
             const ret = options.onSuccess(json);

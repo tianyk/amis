@@ -38,7 +38,7 @@ export interface IScopedContext {
   close: (target: string) => void;
 }
 type AliasIScopedContext = IScopedContext;
-export const ScopedContext = React.createContext(createScopedTools(''));
+export const ScopedContext = React.createContext(createScopedTools('')); /* Root Context */
 
 function createScopedTools(
   path?: string,
@@ -223,6 +223,12 @@ function closeDialog(component: ScopedComponentType) {
   component.props.onClose && component.props.onClose();
 }
 
+/**
+ * 包装组件
+ * 1. 添加一个 IScopedContext 类型的 scoped
+ * @param ComposedComponent
+ * @returns
+ */
 export function HocScoped<
   T extends {
     $path?: string;
@@ -249,7 +255,7 @@ export function HocScoped<
     ref: any;
     scoped?: IScopedContext;
 
-    constructor(props: ScopedProps, context: IScopedContext) {
+    constructor(props: ScopedProps, context: IScopedContext/* React Context */) {
       super(props);
 
       this.scoped = createScopedTools(

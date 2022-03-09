@@ -522,7 +522,7 @@ export default class Form extends React.Component<FormProps, object> {
       });
     }
 
-    if (isEffectiveApi(initApi, store.data, initFetch, initFetchOn)) {
+    if (isEffectiveApi(initApi, store.data, initFetch, initFetchOn)) { /*数据初始化 initApi */
       store
         .fetchInitData(initApi as any, store.data, {
           successMessage: fetchSuccess,
@@ -544,7 +544,7 @@ export default class Form extends React.Component<FormProps, object> {
           }
         })
         .then(this.initInterval)
-        .then(this.onInit);
+        .then(this.onInit); /* 执行完了 */
     } else {
       setTimeout(this.onInit.bind(this), 4);
     }
@@ -819,7 +819,7 @@ export default class Form extends React.Component<FormProps, object> {
       return;
     }
 
-    store.changeValue(name, value, changePristine);
+    store.changeValue(name, value, changePristine); /* 改变store的值 */
 
     if (!changePristine) {
       (formLazyChange === false ? this.emitChange : this.lazyEmitChange)(
@@ -1269,7 +1269,7 @@ export default class Form extends React.Component<FormProps, object> {
     return this.renderChildren(body, region, otherProps);
   }
 
-  renderChildren(
+  renderChildren(/*表单项目*/
     children: Array<any>,
     region: string,
     otherProps: Partial<FormProps> = {}
@@ -1367,9 +1367,9 @@ export default class Form extends React.Component<FormProps, object> {
       formLazyChange
     } = props;
 
-    const subProps = {
+    const subProps = { /*表单项 props */
       formStore: form,
-      data: store.data,
+      data: store.data, /* 全部的值 */
       key: `${(control as Schema).name || ''}-${
         (control as Schema).type
       }-${key}`,
@@ -1382,7 +1382,7 @@ export default class Form extends React.Component<FormProps, object> {
       btnDisabled: form.loading || form.validating,
       onAction: this.handleAction,
       onQuery: this.handleQuery,
-      onChange: this.handleChange,
+      onChange: this.handleChange, /* onchange */
       onBulkChange: this.handleBulkChange,
       addHook: this.addHook,
       removeHook: this.removeHook,
@@ -1406,7 +1406,7 @@ export default class Form extends React.Component<FormProps, object> {
     }
 
     lazyChange === false && (subSchema.changeImmediately = true);
-    return render(`${region ? `${region}/` : ''}${key}`, subSchema, subProps);
+    return render(`${region ? `${region}/` : ''}${key}`, subSchema, subProps); /* 渲染子组件 */
   }
 
   renderBody() {

@@ -249,7 +249,7 @@ export function embed(
     amisProps = {
       ...amisProps,
       ...props,
-      scopeRef: (ref: any) => (scoped = ref)
+      scopeRef: (ref: any) => (scoped = ref) /* 回调，给*scoped 赋值 */
     };
 
     return (

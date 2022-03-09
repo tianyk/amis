@@ -103,8 +103,8 @@ export function wrapControl<
             super(props);
 
             const {
-              formStore: form,
-              formItem,
+              formStore: form, /* 表单传过来的 store */
+              formItem, /*是子表单时才值*/
               rootStore,
               store,
               onChange,
@@ -145,7 +145,7 @@ export function wrapControl<
             }
 
             let propValue = this.props.value;
-            const model = rootStore.addStore({
+            const model = rootStore.addStore({ /*初始化当前 store */
               id: guid(),
               path: this.props.$path,
               storeType: FormItemStore.name,
@@ -479,7 +479,7 @@ export function wrapControl<
             const {
               formStore: form,
               onChange,
-              $schema: {name, onChange: onFormItemChange, maxLength, minLength},
+              $schema: {name, onChange: onFormItemChange/*自定义的 onChange*/, maxLength, minLength},
               data,
               validateOnChange,
               formSubmited
@@ -497,7 +497,7 @@ export function wrapControl<
 
             this.model.changeEmitedValue(value);
             if (
-              onFormItemChange?.(value, oldValue, this.model, form) === false
+              onFormItemChange?.(value, oldValue, this.model, form) === false /*自定义的 onChange*/
             ) {
               return;
             }
@@ -617,7 +617,7 @@ export function wrapControl<
             };
 
             return (
-              <ComposedComponent
+              <ComposedComponent /*渲染表单项*/
                 {...(this.props as JSX.LibraryManagedAttributes<
                   T,
                   React.ComponentProps<T>

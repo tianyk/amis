@@ -124,12 +124,12 @@ export interface fetcherConfig {
   config?: any;
 }
 
-const renderers: Array<RendererConfig> = [];
+const renderers: Array<RendererConfig> = []; /*全部的 component registerRenderer 注册进来*/
 const rendererNames: Array<string> = [];
 const schemaFilters: Array<RenderSchemaFilter> = [];
 let anonymousIndex = 1;
 
-export function addSchemaFilter(fn: RenderSchemaFilter) {
+export function addSchemaFilter(fn: RenderSchemaFilter) { /* schema 过滤器 */
   schemaFilters.push(fn);
 }
 
@@ -144,7 +144,7 @@ export function filterSchema(
   ) as Schema;
 }
 
-export function Renderer(config: RendererBasicConfig) {
+export function Renderer(config: RendererBasicConfig) { /* 注解，注册组件 */
   return function <T extends RendererComponent>(component: T): T {
     const renderer = registerRenderer({
       ...config,
@@ -154,7 +154,7 @@ export function Renderer(config: RendererBasicConfig) {
   };
 }
 
-export function registerRenderer(config: RendererConfig): RendererConfig {
+export function registerRenderer(config: RendererConfig): RendererConfig { /*factory.Renderer 注册*/
   if (!config.test && !config.type) {
     throw new TypeError('please set config.test or config.type');
   } else if (!config.component) {
@@ -177,19 +177,19 @@ export function registerRenderer(config: RendererConfig): RendererConfig {
     );
   }
 
-  if (config.storeType && config.component) {
-    config.component = HocStoreFactory({
+  if (config.storeType && config.component) { /* 指定了 storeType */
+    config.component = HocStoreFactory({ /* 配置过 PageRenderer storeType 的组件 HocStoreFactory 包装*/
       storeType: config.storeType,
       extendsData: config.storeExtendsData,
       shouldSyncSuperStore: config.shouldSyncSuperStore
-    })(observer(config.component));
+    })(observer(config.component)); /*mobx封装*/
   }
 
-  if (config.isolateScope) {
+  if (config.isolateScope) { /*包装一个 context */
     config.component = Scoped(config.component);
   }
 
-  const idx = findIndex(
+  const idx = findIndex(/*优先级*/
     renderers,
     item => (config.weight as number) < item.weight
   );
@@ -354,7 +354,7 @@ export function render(
       translate
     } as any;
 
-    store = RendererStore.create({}, options);
+    store = RendererStore.create({}, options/* getEnv() */);
     stores[options.session || 'global'] = store;
   }
 
@@ -433,7 +433,7 @@ export function updateEnv(options: Partial<RenderOptions>, session = 'global') {
   }
 }
 
-let cache: {[propName: string]: RendererConfig} = {};
+let cache: {[propName: string]: RendererConfig} = {}; /* schema到component解析器缓存*/
 export function resolveRenderer(
   path: string,
   schema?: Schema

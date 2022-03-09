@@ -35,12 +35,12 @@ export function HocStoreFactory(renderer: {
     };
 
     @observer
-    class StoreFactory extends React.Component<Props> {
+    class StoreFactory extends React.Component<Props> { /*封装组件*/
       static displayName = `WithStore(${
         Component.displayName || Component.name
       })`;
       static ComposedComponent = Component;
-      static contextType = RootStoreContext;
+      static contextType = RootStoreContext; /* 把 store 通过 context 注入进来 */
       store: IIRendererStore;
       context!: React.ContextType<typeof RootStoreContext>;
       ref: any;
@@ -51,7 +51,7 @@ export function HocStoreFactory(renderer: {
       ) {
         super(props);
 
-        const rootStore = context;
+        const rootStore = context; /* root context rootStore */
         this.renderChild = this.renderChild.bind(this);
         this.refFn = this.refFn.bind(this);
 
@@ -60,10 +60,10 @@ export function HocStoreFactory(renderer: {
           path: this.props.$path,
           storeType: renderer.storeType,
           parentId: this.props.store ? this.props.store.id : ''
-        }) as IIRendererStore;
+        }) as IIRendererStore; // 创建一个真正的 mobx store
         this.store = store;
 
-        const extendsData =
+        const extendsData = /* 是否继承父 store data */
           typeof renderer.extendsData === 'function'
             ? renderer.extendsData(props)
             : renderer.extendsData;
@@ -284,7 +284,7 @@ export function HocStoreFactory(renderer: {
 
         let exprProps: any = {};
         if (!detectField || detectField === 'data') {
-          exprProps = getExprProperties(rest, this.store.data, undefined, rest);
+          exprProps = getExprProperties(rest, this.store.data, undefined, rest); /* 计算值 xxOn xxExpr */
 
           if (exprProps.hidden || exprProps.visible === false) {
             return null;
@@ -292,7 +292,7 @@ export function HocStoreFactory(renderer: {
         }
 
         return (
-          <Component
+          <Component /* 实际 component */
             {
               ...(rest as any) /* todo */
             }
@@ -300,7 +300,7 @@ export function HocStoreFactory(renderer: {
             ref={this.refFn}
             data={this.store.data}
             dataUpdatedAt={this.store.updatedAt}
-            store={this.store}
+            store={this.store} /* store 注入 */
             scope={this.store.data}
             render={this.renderChild}
           />

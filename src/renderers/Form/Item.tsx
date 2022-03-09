@@ -1120,7 +1120,7 @@ export function asFormItem(config: Omit<FormItemConfig, 'component'>) {
       delete config.storeType;
     }
 
-    return wrapControl(
+    return wrapControl( /* 封装表单项目 初始化formItem store*/
       hoistNonReactStatic(
         class extends FormItemWrap {
           static defaultProps = {
@@ -1153,7 +1153,7 @@ export function asFormItem(config: Omit<FormItemConfig, 'component'>) {
             super(props);
             this.refFn = this.refFn.bind(this);
 
-            const {validations, formItem: model} = props;
+            const {validations, formItem: model} = props; /* formItemStore 有表单传入 */
 
             // 组件注册的时候可能默认指定验证器类型
             if (model && !validations && config.validations) {
@@ -1199,7 +1199,7 @@ export function asFormItem(config: Omit<FormItemConfig, 'component'>) {
             const controlSize = size || defaultSize;
 
             return (
-              <Control
+              <Control /* 实际的 form item Component */
                 {...rest}
                 onOpenDialog={this.handleOpenDialog}
                 size={config.sizeMutable !== false ? undefined : size}
@@ -1237,7 +1237,7 @@ export function asFormItem(config: Omit<FormItemConfig, 'component'>) {
 }
 
 export function registerFormItem(config: FormItemConfig): RendererConfig {
-  let Control = asFormItem(config)(config.component);
+  let Control = asFormItem(config)(config.component); /* 第一次包装 */
 
   return registerRenderer({
     ...config,

@@ -104,7 +104,7 @@ export default class TextControl extends React.PureComponent<
   constructor(props: TextProps) {
     super(props);
 
-    const value = props.value;
+    const value = props.value; /* store 上取到的值，参见 wrapControl */
     this.state = {
       isOpen: false,
       inputValue:
@@ -711,7 +711,7 @@ export default class TextControl extends React.PureComponent<
           size={10}
           step={step}
           onChange={this.handleNormalInputChange}
-          value={this.valueToString(value)}
+          value={this.valueToString(value)} /* 普通 input */
         />
         {clearable && !disabled && value ? (
           <a onClick={this.clearValue} className={`${ns}TextControl-clear`}>

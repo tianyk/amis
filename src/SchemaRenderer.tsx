@@ -54,7 +54,7 @@ export class SchemaRenderer extends React.Component<SchemaRendererProps, any> {
   static displayName: string = 'Renderer';
 
   rendererKey = '';
-  renderer: RendererConfig | null;
+  renderer: RendererConfig | null; /* 匹配到的真实组件 */
   ref: any;
 
   schema: any;
@@ -96,7 +96,7 @@ export class SchemaRenderer extends React.Component<SchemaRendererProps, any> {
     return false;
   }
 
-  resolveRenderer(props: SchemaRendererProps, force = false): any {
+  resolveRenderer(props: SchemaRendererProps, force = false): any { /* 根据 type 获取实际的 component */
     let schema = props.schema;
     let path = props.$path;
 
@@ -115,7 +115,7 @@ export class SchemaRenderer extends React.Component<SchemaRendererProps, any> {
         !this.renderer ||
         this.rendererKey !== `${schema.type}-${schema.$$id}`)
     ) {
-      const rendererResolver = props.env.rendererResolver || resolveRenderer;
+      const rendererResolver = props.env.rendererResolver || resolveRenderer; /* render 解析器 factory.resolveRenderer */
       this.renderer = rendererResolver(path, schema, props);
       this.rendererKey = `${schema.type}-${schema.$$id}`;
     } else {
@@ -197,7 +197,7 @@ export class SchemaRenderer extends React.Component<SchemaRendererProps, any> {
       return null;
     }
 
-    let {path: $path, schema} = this.resolveRenderer(this.props);
+    let {path: $path, schema} = this.resolveRenderer(this.props); /* 解析出来实际的 component */
     const theme = this.props.env.theme;
 
     if (Array.isArray(schema)) {
@@ -206,10 +206,10 @@ export class SchemaRenderer extends React.Component<SchemaRendererProps, any> {
 
     const detectData =
       schema &&
-      (schema.detectField === '&' ? rest : rest[schema.detectField || 'data']);
+      (schema.detectField === '&' ? rest : rest[schema.detectField || 'data']); /* https://baidu.github.io/amis/zh-CN/docs/start/getting-started#props */
     const exprProps: any = detectData
       ? getExprProperties(schema, detectData, undefined, rest)
-      : {};
+      : {}; /* xxOn xxExpr 类似的属性都解析为实际的值 */
 
     if (
       exprProps &&
@@ -223,7 +223,7 @@ export class SchemaRenderer extends React.Component<SchemaRendererProps, any> {
       (rest as any).invisible = true;
     }
 
-    if (schema.children) {
+    if (schema.children) { /* 子节点 */
       return rest.invisible
         ? null
         : React.isValidElement(schema.children)
@@ -236,7 +236,7 @@ export class SchemaRenderer extends React.Component<SchemaRendererProps, any> {
             render: this.renderChild,
             forwardedRef: this.refFn
           });
-    } else if (typeof schema.component === 'function') {
+    } else if (typeof schema.component === 'function') { /*直接就是 component */
       const isSFC = !(schema.component.prototype instanceof React.Component);
       const {
         data: defaultData,
@@ -261,7 +261,7 @@ export class SchemaRenderer extends React.Component<SchemaRendererProps, any> {
           });
     } else if (Object.keys(schema).length === 0) {
       return null;
-    } else if (!this.renderer) {
+    } else if (!this.renderer) { /*异步加载*/
       return rest.invisible ? null : (
         <LazyComponent
           {...rest}
@@ -289,14 +289,14 @@ export class SchemaRenderer extends React.Component<SchemaRendererProps, any> {
     }
 
     const renderer = this.renderer as RendererConfig;
-    schema = filterSchema(schema, renderer, rest);
+    schema = filterSchema(schema, renderer, rest); /* addSchemaFilter 注册过滤器 */
     const {
       data: defaultData,
       value: defaultValue,
       activeKey: defaultActiveKey,
       ...restSchema
     } = schema;
-    const Component = renderer.component;
+    const Component = renderer.component; /*包装后的component 添加了 store 或者 Context  WithRootStore or asItem or HocScoped */
 
     // 原来表单项的 visible: false 和 hidden: true 表单项的值和验证是有效的
     // 而 visibleOn 和 hiddenOn 是无效的，
@@ -324,7 +324,7 @@ export class SchemaRenderer extends React.Component<SchemaRendererProps, any> {
         $path={$path}
         $schema={{...schema, ...exprProps}}
         ref={this.refFn}
-        render={this.renderChild}
+        render={this.renderChild} /*每个组件都有一个 render props */
       />
     );
   }
